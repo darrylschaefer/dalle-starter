@@ -40,4 +40,4 @@ Start your internet browser, and type in the address: http://localhost:3000
 
 <h3>Requesting generations</h3>
 
-To request image generations, visit http://localhost:3000 in your web browser. Enter the desired prompt, resolution (default is 1024x1024), and quantity (default is 1), then click 'submit' to send the API request. If you would like the resulting images to be saved locally, check the 'save locally' checkbox - the file will save to the /generations folder in the root of your application.
+To request image generations, visit http://localhost:3000 in your web browser after the server has started. Enter the desired prompt, resolution (default is 1024x1024), and quantity (default is 1), then click 'submit' to send the API request. If you would like the resulting images to be saved locally, check the 'save locally' checkbox - the file will save to the /generations folder in the root of your application.
