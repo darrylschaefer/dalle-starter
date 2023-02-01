@@ -1,76 +1,353 @@
-$("#generation-prompt-button").click(function() {
-  requestGeneration();
+document.getElementById("tabs-input").addEventListener("change", function (e) {
+  switch (e.target.selectedIndex) {
+    case 0:
+      // generation tab selected
+      document.getElementById("generation").classList.remove("hidden");
+      document.getElementById("variation").classList.add("hidden");
+      document.getElementById("edits").classList.add("hidden");
+      break;
+    case 1:
+      // variation tab selected
+      document.getElementById("variation").classList.remove("hidden");
+      document.getElementById("generation").classList.add("hidden");
+      document.getElementById("edits").classList.add("hidden");
+      break;
+    case 2:
+      // edit tab selected
+      document.getElementById("edits").classList.remove("hidden");
+      document.getElementById("variation").classList.add("hidden");
+      document.getElementById("generation").classList.add("hidden");
+      break;
+  }
 });
 
-function requestGeneration() {
-  let promptData = {};
-  promptData.promptText = $("#generation-prompt-input").val();
-  promptData.promptRes = $("#generation-toolbar-size").val();
-  promptData.promptNum = $("#generation-toolbar-number").val();
-  promptData.promptSave = $("#generation-toolbar-save").is(":checked");
-  promptData.promptTime = new Date();
+document.onkeydown = function (e) {
+  if (e.key === "Delete") {
+    var currentCanvas = document.getElementById("tabs-input").selectedIndex;
+    switch (currentCanvas) {
+      case 1:
+        variationCanvas.remove(variationCanvas.getActiveObject());
+      case 2:
+        editsCanvas.remove(editsCanvas.getActiveObject());
+    }
+  }
+};
 
-  //Append a template element
+var variationCanvas = new fabric.Canvas("variation-canvas");
+variationCanvas.setDimensions({
+  width: 1024,
+  height: 1024,
+});
+
+var editsCanvas = new fabric.Canvas("edits-canvas");
+editsCanvas.setDimensions({
+  width: 1024,
+  height: 1024,
+});
+
+function addImage(e, canvas) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.src = reader.result;
+    img.onload = () => {
+      const image = new fabric.Image(img);
+      switch (canvas) {
+        case 1:
+          variationCanvas.add(image);
+          variationCanvas.renderAll();
+          break;
+        case 2:
+          editsCanvas.add(image);
+          editsCanvas.renderAll();
+          break;
+      }
+    };
+  };
+  reader.readAsDataURL(e.target.files[0]);
+  e.target.value = null;
+}
+
+function eraseCanvas(canvas) {
+  switch (canvas) {
+    case 1:
+      variationCanvas.freeDrawingBrush = new fabric.EraserBrush(
+        variationCanvas
+      );
+      variationCanvas.isDrawingMode = true;
+      variationCanvas.freeDrawingBrush.width = 20;
+      break;
+    case 2:
+      editsCanvas.freeDrawingBrush = new fabric.EraserBrush(editsCanvas);
+      editsCanvas.isDrawingMode = true;
+      editsCanvas.freeDrawingBrush.width = 20;
+      break;
+  }
+}
+
+function selectCanvas(canvas) {
+  switch (canvas) {
+    case 1:
+      variationCanvas.isDrawingMode = false;
+      break;
+    case 2:
+      editsCanvas.isDrawingMode = false;
+      break;
+  }
+}
+
+function clearCanvas(canvas) {
+  switch (canvas) {
+    case 1:
+      variationCanvas.clear();
+      break;
+    case 2:
+      editsCanvas.clear();
+      break;
+  }
+}
+
+function submit() {
+  var index = document.getElementById("tabs-input").selectedIndex;
+  switch (index) {
+    case 0:
+      requestGeneration();
+      break;
+    case 1:
+      requestVariation();
+      break;
+    case 2:
+      requestEdit();
+  }
+}
+
+// function displaySuccess(ele, responseData) {
+//   $(ele).find(".generation-spinner").remove();
+//   $(ele).find(".generation-status").text("SUCCESS");
+//   $(ele).find(".generation-status")[0].setAttribute("class", "text-green-700");
+//   $(ele)
+//     .find(".opacity-20")
+//     .each(function () {
+//       $(this)[0].classList.remove("opacity-20");
+//     });
+//   $(ele).find(".placeholder").remove();
+//   for (i = 0; i < responseData.length; i++) {
+//     let imgEle = document.createElement("div");
+//     imgEle.innerHTML = `
+//        <img class="h-64 w-64" onclick="openLightbox(this)" src="${responseData[i].url}">
+//        `;
+//     $(ele).find(".images").append(imgEle);
+//   }
+// }
+
+//the above function but only using vanilla js
+function displaySuccess(ele, responseData) {
+  ele.querySelector(".generation-spinner").remove();
+  ele.querySelector(".generation-status").textContent = "SUCCESS";
+  ele.querySelector(".generation-status").classList.add("text-green-700");
+  ele.querySelector(".generation-status").classList.remove("text-rose-700");
+  ele.querySelectorAll(".opacity-20").forEach((ele) => {
+    ele.classList.remove("opacity-20");
+  });
+  ele.querySelector(".placeholder").remove();
+  for (i = 0; i < responseData.length; i++) {
+    let imgEle = document.createElement("div");
+    imgEle.innerHTML = `
+        <img class="h-64 w-64" onclick="openLightbox(this)" src="${responseData[i].url}">
+        `;
+    ele.querySelector(".images").appendChild(imgEle);
+  }
+}
+
+// function displayError(ele, error) {
+//   console.log(error);
+//   $(ele).find(".placeholder").remove();
+//   $(ele).find(".generation-spinner").remove();
+//   $(ele).find(".generation-status").text(error);
+//   $(ele).find(".generation-status")[0].setAttribute("class", "text-rose-700");
+//   $(ele)
+//     .find(".opacity-20")
+//     .each(function () {
+//       $(this)[0].classList.remove("opacity-20");
+//     });
+//  }
+
+
+//the above function in vanilla js
+function displayError(ele, error) {
+  console.log(error);
+  ele.querySelector(".placeholder").remove();
+  ele.querySelector(".generation-spinner").remove();
+  ele.querySelector(".generation-status").textContent = error;
+  ele.querySelector(".generation-status").classList.add("text-rose-700");
+  ele.querySelectorAll(".opacity-20").forEach((ele) => {
+    ele.classList.remove("opacity-20");
+  }); 
+}
+
+
+function requestGeneration() {
+
+  // Get the data from the prompt
+  let promptData = {};
+  promptData.promptText = document.getElementById("generation-input").value;
+  promptData.promptRes = document.getElementById("size").value;
+  promptData.promptNum = document.getElementById("number").value;
+  promptData.promptSave = document.getElementById("save").checked;
+  promptData.promptTime = new Date();
+ 
+  // Append a template element
   const ele = document.createElement("div");
-  ele.setAttribute("class", "generation-template-container");
   let postHTML = `
-    <div class="generation-template-header">
-      <div class="generation-template-prompt">
-        "${promptData.promptText}"
-      </div>
-      <div class="generation-template-time">
-        GENERATED AT ${promptData.promptTime}
-      </div>
-      <div class="generation-template-status">PENDING
-      </div>
+  <div class="relative items-center block p-6 bg-white border border-gray-100 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-700">
+    <h5 class="mb-2 text-base font-bold tracking-tight text-gray-900 dark:text-white opacity-20">"${promptData.promptText}"</h5>
+    <p class="mb-2 text-sm font-normal text-gray-700 dark:text-gray-400 opacity-20"> GENERATED AT ${promptData.promptTime} - <span class="generation-status">PENDING</span></p>
+    <div role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2 generation-spinner">
+        <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
+        <span class="sr-only"> Loading... </span>
     </div>
-    <div class="generation-template-images">
-      <div class="generation-template-loading">
-        <div class="loading">
-          <div class="spinner">
-          <div>
-        </div>
-      </div>
+    <div class="images flex gap-3 flex-wrap">
+    <div class="placeholder w-64 h-64 bg-zinc-100"></div>
+    </div>
     </div>
     `;
   ele.innerHTML = postHTML;
-  $("#generation-container").prepend(ele);
 
-  fetch("/request/completion", {
+
+  // Add the element to the page
+  document.getElementById("output").prepend(ele);
+
+  try {
+    fetch("/request/generation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(promptData)
+      body: JSON.stringify(promptData),
     })
-    .then(response => response.json())
-    .then(responseData => {
-      $(ele).find(".generation-template-loading").remove();
-      $(ele).find(".generation-template-status").text("SUCCESS");
-      $(ele).find(".generation-template-status")[0].setAttribute("class", "status-success");
-      for (i = 0; i <= responseData.length; i++) {
-        let imgEle = document.createElement("div");
-        imgEle.setAttribute("class", "generation-overlay-container");
-        imgEle.innerHTML = `
-          <img onclick="openLightbox(this)" src="${responseData[i].url}">
-          `;
-        $(ele).find(".generation-template-images").append(imgEle)
-      }
-    })
-    .catch(error => {
-      // Handle any errors that occurred in the above steps
-      $(ele).find(".generation-template-status").text(error);
-      $(ele).find(".generation-template-status")[0].setAttribute("class", "status-failure");
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json();
+      })
+      .then((responseData) => {
+        displaySuccess(ele, responseData);
+      })
+      .catch((error) => {
+        displayError(ele, error);
+      });
+  } catch {
+    displayError(ele, error);
+  }
 }
 
-setInterval(updatePrompt, 100);
+function requestVariation() {
 
-function updatePrompt() {
-  if ($("#generation-prompt-input").val().length > 3) {
-    $("#generation-prompt-button").attr("disabled", false)
-  } else {
-    $("#generation-prompt-button").attr("disabled", true)
+  // Get the data from the prompt
+  let promptData = {};
+  promptData.promptRes = document.getElementById("size").value;
+  promptData.promptNum = document.getElementById("number").value;
+  promptData.promptSave = document.getElementById("save").checked;
+  promptData.imageData = variationCanvas.toDataURL("png");
+  promptData.promptTime = new Date();
+
+  //Append a template element
+  const ele = document.createElement("div");
+
+  let postHTML = `
+  <div class="relative items-center block p-6 bg-white border border-gray-100 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-700">
+    <h5 class="mb-2 text-base font-bold tracking-tight text-gray-900 dark:text-white opacity-20">VARIATION</h5>
+    <p class="mb-2 text-sm font-normal text-gray-700 dark:text-gray-400 opacity-20"> GENERATED AT ${promptData.promptTime} - <span class="generation-status">PENDING</span></p>
+    <div role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2 generation-spinner">
+        <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
+        <span class="sr-only"> Loading... </span>
+    </div>
+    <div class="images flex gap-3 flex-wrap">
+    <div class="placeholder w-64 h-64 bg-zinc-100"></div>
+    </div>
+    </div>
+    `;
+  ele.innerHTML = postHTML;
+
+  // Add the element to the page
+
+  document.getElementById("output").prepend(ele);
+
+  // Send the data to the server
+
+  try {
+    fetch("/request/variation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(promptData),
+    })
+      .then((response) => response.json())
+      .then((responseData) => {
+        displaySuccess(ele, responseData);
+      })
+      .catch((error) => {
+        displayError(ele, error);
+      });
+  } catch {
+    displayError(ele, error);
+  }
+}
+
+function requestEdit() {
+
+  // Get the data from the prompt
+  let promptData = {};
+
+  promptData.promptText = document.getElementById("edits-input").value;
+  promptData.promptRes = document.getElementById("size").value;
+  promptData.promptNum = document.getElementById("number").value;
+  promptData.promptSave = document.getElementById("save").checked;
+  promptData.imageData = editsCanvas.toDataURL("png");
+  promptData.promptTime = new Date();
+
+
+  //Append a template element
+  const ele = document.createElement("div");
+
+  let postHTML = `
+  <div class="relative items-center block p-6 bg-white border border-gray-100 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-700">
+    <h5 class="mb-2 text-base font-bold tracking-tight text-gray-900 dark:text-white opacity-20">EDIT</h5>
+    <p class="mb-2 text-sm font-normal text-gray-700 dark:text-gray-400 opacity-20"> GENERATED AT ${promptData.promptTime} - <span class="generation-status">PENDING</span></p>
+    <div role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2 generation-spinner">
+        <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
+        <span class="sr-only"> Loading... </span>
+    </div>
+    <div class="images flex gap-3 flex-wrap">
+    <div class="placeholder w-64 h-64 bg-zinc-100"></div>
+    </div>
+    </div>
+    `;
+  ele.innerHTML = postHTML;
+
+
+  // Add the element to the page
+  document.getElementById("output").prepend(ele);
+
+  try {
+    fetch("/request/edits", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(promptData),
+    })
+      .then((response) => response.json())
+      .then((responseData) => {
+        displaySuccess(ele, responseData);
+      })
+      .catch((error) => {
+        displayError(ele, error);
+      });
+  } catch {
+    displayError(ele, error);
   }
 }
 
@@ -82,7 +359,7 @@ function openLightbox(image) {
   // Set the src attribute of the lightbox image to the src attribute of the clicked image
   lightboxImage.src = image.src;
 
-  lightbox.style.display = "flex";
+  lightbox.classList.remove("hidden");
   document.addEventListener("keydown", closeLightbox);
   lightbox.addEventListener("click", closeLightbox);
 }
@@ -104,5 +381,5 @@ function closeLightbox(event) {
   // Remove the event listeners for the keydown and click events
   document.removeEventListener("keydown", closeLightbox);
   lightbox.removeEventListener("click", closeLightbox);
-  lightbox.style.display = "none";
+  lightbox.classList.add("hidden");
 }

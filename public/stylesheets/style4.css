@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.canvas-container{
+  border: 1px solid black;
+  background: url("/images/checkerboard.png");
+  flex-shrink:0;
+}
