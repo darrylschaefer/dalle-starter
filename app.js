@@ -5,8 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var requestRouter = require('./routes/request');
-
+const bodyParser = require('body-parser');
 var app = express();
+
+
+app.use(bodyParser.json({ limit: '4mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '4mb' }));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,6 +24,7 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use('/', indexRouter);
 app.use('/request', requestRouter);
