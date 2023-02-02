@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "tailwind": "npx tailwindcss -i ./public/stylesheets/style4.css -o ./public/stylesheets/style.css",
+    "tailwind": "npx tailwindcss -i ./src/stylesheets/style.css -o ./public/stylesheets/style.css",
     "build": "npm run tailwind && npm run start"
   },
   "dependencies": {
