@@ -121,26 +121,6 @@ function submit() {
   }
 }
 
-// function displaySuccess(ele, responseData) {
-//   $(ele).find(".generation-spinner").remove();
-//   $(ele).find(".generation-status").text("SUCCESS");
-//   $(ele).find(".generation-status")[0].setAttribute("class", "text-green-700");
-//   $(ele)
-//     .find(".opacity-20")
-//     .each(function () {
-//       $(this)[0].classList.remove("opacity-20");
-//     });
-//   $(ele).find(".placeholder").remove();
-//   for (i = 0; i < responseData.length; i++) {
-//     let imgEle = document.createElement("div");
-//     imgEle.innerHTML = `
-//        <img class="h-64 w-64" onclick="openLightbox(this)" src="${responseData[i].url}">
-//        `;
-//     $(ele).find(".images").append(imgEle);
-//   }
-// }
-
-//the above function but only using vanilla js
 function displaySuccess(ele, responseData) {
   ele.querySelector(".generation-spinner").remove();
   ele.querySelector(".generation-status").textContent = "SUCCESS";
@@ -159,21 +139,6 @@ function displaySuccess(ele, responseData) {
   }
 }
 
-// function displayError(ele, error) {
-//   console.log(error);
-//   $(ele).find(".placeholder").remove();
-//   $(ele).find(".generation-spinner").remove();
-//   $(ele).find(".generation-status").text(error);
-//   $(ele).find(".generation-status")[0].setAttribute("class", "text-rose-700");
-//   $(ele)
-//     .find(".opacity-20")
-//     .each(function () {
-//       $(this)[0].classList.remove("opacity-20");
-//     });
-//  }
-
-
-//the above function in vanilla js
 function displayError(ele, error) {
   console.log(error);
   ele.querySelector(".placeholder").remove();
