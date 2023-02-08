@@ -26,13 +26,11 @@ cd sampleproject
 # Install dependencies
 npm install
 
-# Add API key to /routes/request.js, line 6
-const configuration = new Configuration({
-  apiKey: "APIKEYHERE",
-});
+# Add API key to environment.key in root folder
+OPENAI_API_KEY=""
 
 # Start app
-npm start
+npm run build
 
 # Open client
 Start your internet browser, and type in the address: http://localhost:3000
