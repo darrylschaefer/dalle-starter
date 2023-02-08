@@ -250,13 +250,18 @@ function requestVariation() {
       },
       body: JSON.stringify(promptData),
     })
-      .then((response) => response.json())
-      .then((responseData) => {
-        displaySuccess(ele, responseData);
-      })
-      .catch((error) => {
-        displayError(ele, error);
-      });
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((responseData) => {
+      displaySuccess(ele, responseData);
+    })
+    .catch((error) => {
+      displayError(ele, error);
+    });
   } catch {
     displayError(ele, error);
   }
@@ -305,13 +310,18 @@ function requestEdit() {
       },
       body: JSON.stringify(promptData),
     })
-      .then((response) => response.json())
-      .then((responseData) => {
-        displaySuccess(ele, responseData);
-      })
-      .catch((error) => {
-        displayError(ele, error);
-      });
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((responseData) => {
+      displaySuccess(ele, responseData);
+    })
+    .catch((error) => {
+      displayError(ele, error);
+    });
   } catch {
     displayError(ele, error);
   }
