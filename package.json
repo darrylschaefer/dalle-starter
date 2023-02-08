@@ -1,6 +1,6 @@
 {
-  "name": "node-dalle2-boilerplate",
-  "version": "0.0.1",
+  "name": "dalle2-starter",
+  "version": "0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
