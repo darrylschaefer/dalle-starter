@@ -132,8 +132,9 @@ function displaySuccess(ele, responseData) {
   ele.querySelector(".placeholder").remove();
   for (i = 0; i < responseData.length; i++) {
     let imgEle = document.createElement("div");
+    let dataUrl = "data:image/png;base64," + responseData[i].b64_json;
     imgEle.innerHTML = `
-        <img class="h-64 w-64" onclick="openLightbox(this)" src="${responseData[i].url}">
+        <img class="h-64 w-64" onclick="openLightbox(this)" src="${dataUrl}">
         `;
     ele.querySelector(".images").appendChild(imgEle);
   }
@@ -249,13 +250,18 @@ function requestVariation() {
       },
       body: JSON.stringify(promptData),
     })
-      .then((response) => response.json())
-      .then((responseData) => {
-        displaySuccess(ele, responseData);
-      })
-      .catch((error) => {
-        displayError(ele, error);
-      });
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((responseData) => {
+      displaySuccess(ele, responseData);
+    })
+    .catch((error) => {
+      displayError(ele, error);
+    });
   } catch {
     displayError(ele, error);
   }
@@ -304,13 +310,18 @@ function requestEdit() {
       },
       body: JSON.stringify(promptData),
     })
-      .then((response) => response.json())
-      .then((responseData) => {
-        displaySuccess(ele, responseData);
-      })
-      .catch((error) => {
-        displayError(ele, error);
-      });
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((responseData) => {
+      displaySuccess(ele, responseData);
+    })
+    .catch((error) => {
+      displayError(ele, error);
+    });
   } catch {
     displayError(ele, error);
   }
