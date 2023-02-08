@@ -132,8 +132,9 @@ function displaySuccess(ele, responseData) {
   ele.querySelector(".placeholder").remove();
   for (i = 0; i < responseData.length; i++) {
     let imgEle = document.createElement("div");
+    let dataUrl = "data:image/png;base64," + responseData[i].b64_json;
     imgEle.innerHTML = `
-        <img class="h-64 w-64" onclick="openLightbox(this)" src="${responseData[i].url}">
+        <img class="h-64 w-64" onclick="openLightbox(this)" src="${dataUrl}">
         `;
     ele.querySelector(".images").appendChild(imgEle);
   }
