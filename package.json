@@ -10,6 +10,7 @@
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^16.0.3",
     "express": "~4.16.1",
     "flowbite": "^1.6.2",
     "fs": "^0.0.1-security",
