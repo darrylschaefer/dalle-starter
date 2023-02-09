@@ -11,6 +11,7 @@ You can add your OpenAI API Key and request image generations, variations, or ed
 <ul>
 <li>Access Dall-E 2 generation using API.</li>
 <li>Generation, Variation, or Edit endpoints.</li>
+<li>Generate images without corner logo.</li>
 <li>Mask images for Edit endpoints in-browser using canvas editor.</li>
 <li>Save image generations locally, automatically.</li>
 <li>Adjust generation quantity and resolution.</li>
