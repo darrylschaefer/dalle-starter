@@ -1,14 +1,12 @@
 # Dall-E 2 Starter
 
-A starter application built on Node / Express for interacting with the <b>Dall-E 2 (OpenAI) API</b> through a web browser. You can add your OpenAI API Key and request image generations, variations, or edits. You can manually adjust the generation quantity and resolution, and automatically save the resulting images locally.
-
-<img src="https://user-images.githubusercontent.com/119073511/219451667-83b28137-5334-4ef2-95e8-d69b4b210ccb.gif" style="width:500px; border: 1px solid rgba(0,0,0,.3);" title="image showing browser interface">
-
 <h3>Who is this for?</h3>
 
 This starter application is for developers, artists or anyone routinely interacting with the Dall-E 2 API from OpenAI. It provides a quick and easy way to interact with the API through a web browser without needing to write code.
 
-It's (as of writing this) cheaper per image generation to use the API versus the official web app, allows for pay-as-you-go pricing, has no bottom-right logo on generation, and has no minimum amount of images per request.
+You can add your OpenAI API Key and request image generations, variations, or edits. You can manually adjust the generation quantity and resolution, and automatically save the resulting images locally.
+
+<img src="https://user-images.githubusercontent.com/119073511/219451667-83b28137-5334-4ef2-95e8-d69b4b210ccb.gif" style="width:500px; border: 1px solid rgba(0,0,0,.3);" title="image showing browser interface">
 
 <h3>Features</h3>
 <ul>
