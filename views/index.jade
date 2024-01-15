@@ -10,15 +10,22 @@ block content
   div(class="absolute w-full h-full main-content sm:max-lg:hidden")
     nav(class="bg-white border-b border-gray-200 p-3.5 z-30 w-full flex items-center justify-between")
       div(class="flex items-center gap-x-2.5")
+        div(class="flex items-center gap-x-.5")
+          label Model
+          select(id="model" class="bg-gray-50 border ml-2.5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+            option(value="dall-e-3") dall-e-3
+            option(value="dall-e-2") dall-e-2
         div(class="flex gap-x-.5 items-center")
           label Resolution
           select(id="size" class="bg-gray-50 border ml-2.5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
-            option(value="1024x1024") 1024x1024
-            option(value="512x512") 512x512
-            option(value="256x256") 256x256
+            option(value="1792x1024") 1792x1024
+            option(value="1024x1792") 1024x1792
+            option(value="1024x1024" selected) 1024x1024
+            option(value="512x512" disabled) 512x512
+            option(value="256x256" disabled) 256x256
         div(class="flex gap-x-.5 items-center")
           label Number
-          select(id="number" class="bg-gray-50 border ml-2.5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+          select(id="number" disabled="true" class="bg-gray-50 border ml-2.5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
             option(value=1) 1
             option(value=2) 2
             option(value=3) 3
@@ -29,6 +36,16 @@ block content
             option(value=8) 8
             option(value=9) 9
             option(value=10) 10
+        div(class="flex items-center")
+          label Quality 
+          select(id="quality" class="bg-gray-50 border ml-2.5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+            option(value="standard") Standard
+            option(value="hd") HD
+        div(class="flex items-center")
+          label Style
+          select(id="style" class="bg-gray-50 border ml-2.5 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500")
+            option(value="vivid") Vivid
+            option(value="natural") Natural
         div(class="flex items-center")
           label(class="relative inline-flex items-center cursor-pointer")
             input(id="save" type="checkbox" value="" checked class="sr-only peer")

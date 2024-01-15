@@ -5,18 +5,97 @@ document.getElementById("tabs-input").addEventListener("change", function (e) {
       document.getElementById("generation").classList.remove("hidden");
       document.getElementById("variation").classList.add("hidden");
       document.getElementById("edits").classList.add("hidden");
+      document.getElementById("model").disabled = false;
+
+      //disable the "number of images" option, due to no dalle3 support
+      document.getElementById("number").disabled = true;
+
       break;
     case 1:
       // variation tab selected
       document.getElementById("variation").classList.remove("hidden");
       document.getElementById("generation").classList.add("hidden");
       document.getElementById("edits").classList.add("hidden");
+      document.getElementById("model").disabled = true;
+
+      // set model selection to "dall-e-2"
+      document.getElementById("model").selectedIndex = 1;
+
+      // set size selection to "1024x1024"
+      document.getElementById("size").selectedIndex = 2;
+
+      //enable the "number of images" option, due to dalle2 support
+      document.getElementById("number").disabled = false;
+
+      // hide style and quality options
+      document.getElementById("style").parentNode.classList.add("hidden");
+      document.getElementById("quality").parentNode.classList.add("hidden");
+
       break;
     case 2:
       // edit tab selected
       document.getElementById("edits").classList.remove("hidden");
       document.getElementById("variation").classList.add("hidden");
       document.getElementById("generation").classList.add("hidden");
+      document.getElementById("model").disabled = true;
+
+      // set model selection to "dall-e-2"
+      document.getElementById("model").selectedIndex = 1;
+
+      // set size selection to "1024x1024"
+      document.getElementById("size").selectedIndex = 2;
+
+      //enable the "number of images" option, due to dalle2 support
+      document.getElementById("number").disabled = false;
+
+      // hide style and quality options
+      document.getElementById("style").parentNode.classList.add("hidden");
+      document.getElementById("quality").parentNode.classList.add("hidden");
+
+      break;
+  }
+});
+
+document.getElementById("model").addEventListener("change", function (e) {
+  switch (e.target.selectedIndex) {
+    case 0:
+      // dall-e-3 selected, disable model index options 3 and 4, enable 0, 1, and 2
+      document.getElementById("size").children[3].disabled = true;
+      document.getElementById("size").children[4].disabled = true;
+      document.getElementById("size").children[0].disabled = false;
+      document.getElementById("size").children[1].disabled = false;
+      document.getElementById("size").children[2].disabled = false;
+
+      //set size to the universal option of 1024x1024
+      document.getElementById("size").selectedIndex = 2;
+
+      //disable the "number of images" option, due to no dalle3 support. reset to 1 image.
+      document.getElementById("number").disabled = true;
+      document.getElementById("number").selectedIndex = 0;
+
+      // make style and quality options visible
+      document.getElementById("style").parentNode.classList.remove("hidden");
+      document.getElementById("quality").parentNode.classList.remove("hidden");
+
+      break;
+    case 1:
+      // dall-e-2 selected, enable model index options 0 and 1, enable 2, disable 3 and 4
+      document.getElementById("size").children[0].disabled = true;
+      document.getElementById("size").children[1].disabled = true;
+      document.getElementById("size").children[2].disabled = false;
+      document.getElementById("size").children[3].disabled = false;
+      document.getElementById("size").children[4].disabled = false;
+
+      //set size to the universal option of 1024x1024
+      document.getElementById("size").selectedIndex = 2;
+
+      //enable the "number of images" option, due to dalle2 support
+      document.getElementById("number").disabled = false;
+
+      // hide style and quality options
+      document.getElementById("style").parentNode.classList.add("hidden");
+      document.getElementById("quality").parentNode.classList.add("hidden");
+
       break;
   }
 });
@@ -78,7 +157,9 @@ function eraseCanvas(ele, canvas) {
           break;
         case false:
           variationCanvas.isDrawingMode = true;
-          variationCanvas.freeDrawingBrush = new fabric.EraserBrush(variationCanvas);
+          variationCanvas.freeDrawingBrush = new fabric.EraserBrush(
+            variationCanvas
+          );
           variationCanvas.freeDrawingBrush.width = ele.nextElementSibling.value;
           ele.classList.add("bg-gray-200");
           break;
@@ -103,25 +184,31 @@ function eraseCanvas(ele, canvas) {
   }
 }
 
-document.getElementById("variation-eraser-size").addEventListener("change", function (e) {
-  variationCanvas.isDrawingMode = true;
-  variationCanvas.freeDrawingBrush = new fabric.EraserBrush(variationCanvas);
-  variationCanvas.freeDrawingBrush.width = e.target.value;
-  document.getElementById("variation-eraser").classList.add("bg-gray-200");
-});
+document
+  .getElementById("variation-eraser-size")
+  .addEventListener("change", function (e) {
+    variationCanvas.isDrawingMode = true;
+    variationCanvas.freeDrawingBrush = new fabric.EraserBrush(variationCanvas);
+    variationCanvas.freeDrawingBrush.width = e.target.value;
+    document.getElementById("variation-eraser").classList.add("bg-gray-200");
+  });
 
-document.getElementById("edits-eraser-size").addEventListener("change", function (e) {
-  editsCanvas.isDrawingMode = true;
-  editsCanvas.freeDrawingBrush = new fabric.EraserBrush(editsCanvas);
-  editsCanvas.freeDrawingBrush.width = e.target.value;
-  document.getElementById("edits-eraser").classList.add("bg-gray-200");
-});
+document
+  .getElementById("edits-eraser-size")
+  .addEventListener("change", function (e) {
+    editsCanvas.isDrawingMode = true;
+    editsCanvas.freeDrawingBrush = new fabric.EraserBrush(editsCanvas);
+    editsCanvas.freeDrawingBrush.width = e.target.value;
+    document.getElementById("edits-eraser").classList.add("bg-gray-200");
+  });
 
 function selectCanvas(ele, canvas) {
   switch (canvas) {
     case 1:
       variationCanvas.isDrawingMode = false;
-      document.getElementById("variation-eraser").classList.remove("bg-gray-200");
+      document
+        .getElementById("variation-eraser")
+        .classList.remove("bg-gray-200");
       break;
     case 2:
       editsCanvas.isDrawingMode = false;
@@ -185,9 +272,7 @@ function displayError(ele, error) {
   });
 }
 
-
 function requestGeneration() {
-
   // Get the data from the prompt
   let promptData = {};
   promptData.promptText = document.getElementById("generation-input").value;
@@ -195,6 +280,12 @@ function requestGeneration() {
   promptData.promptNum = document.getElementById("number").value;
   promptData.promptSave = document.getElementById("save").checked;
   promptData.promptTime = new Date();
+  promptData.promptModel = document.getElementById("model").value;
+
+  if (document.getElementById("model").value == "dall-e-3") {
+    promptData.promptQuality = document.getElementById("quality").value;
+    promptData.promptStyle = document.getElementById("style").value;
+  }
 
   // Append a template element
   const ele = document.createElement("div");
@@ -213,18 +304,17 @@ function requestGeneration() {
     `;
   ele.innerHTML = postHTML;
 
-
   // Add the element to the page
   document.getElementById("output").prepend(ele);
 
   try {
     fetch("/request/generation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(promptData),
-      })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(promptData),
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -243,7 +333,6 @@ function requestGeneration() {
 }
 
 function requestVariation() {
-
   // Get the data from the prompt
   let promptData = {};
   promptData.promptRes = document.getElementById("size").value;
@@ -278,12 +367,12 @@ function requestVariation() {
 
   try {
     fetch("/request/variation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(promptData),
-      })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(promptData),
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -302,7 +391,6 @@ function requestVariation() {
 }
 
 function requestEdit() {
-
   // Get the data from the prompt
   let promptData = {};
 
@@ -312,7 +400,6 @@ function requestEdit() {
   promptData.promptSave = document.getElementById("save").checked;
   promptData.imageData = editsCanvas.toDataURL("png");
   promptData.promptTime = new Date();
-
 
   //Append a template element
   const ele = document.createElement("div");
@@ -332,18 +419,17 @@ function requestEdit() {
     `;
   ele.innerHTML = postHTML;
 
-
   // Add the element to the page
   document.getElementById("output").prepend(ele);
 
   try {
     fetch("/request/edits", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(promptData),
-      })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(promptData),
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -367,7 +453,7 @@ function openLightbox(image) {
   var lightboxImage = document.getElementById("lightbox-image");
 
   // Set the src attribute of the lightbox image to the src attribute of the clicked image
-//  lightboxImage.src = image.src;
+  //  lightboxImage.src = image.src;
   //instead of image.src, set it to the background image url
   lightboxImage.src = image.style.backgroundImage.slice(5, -2);
 

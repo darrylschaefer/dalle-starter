@@ -1,8 +1,8 @@
-# Dall-E 2 Starter
+# Dall-E Starter
 
 <h3>Who is this for?</h3>
 
-This starter application is for developers, artists or anyone routinely interacting with the Dall-E 2 API from OpenAI. It provides a quick and easy way to interact with the API through a web browser without needing to write code.
+This starter application is for developers, artists or anyone routinely interacting with the Dall-E 2 / Dall-E 3 API from OpenAI. It provides a quick and easy way to interact with the API through a web browser without needing to write code.
 
 You can add your OpenAI API Key and request image generations, variations, or edits. You can manually adjust the generation quantity and resolution, and automatically save the resulting images locally.
 
@@ -10,12 +10,13 @@ You can add your OpenAI API Key and request image generations, variations, or ed
 
 <h3>Features</h3>
 <ul>
-<li>Access Dall-E 2 generation using API.</li>
-<li>Generation, Variation, or Edit endpoints.</li>
+<li>Access Dall-E 3 generation using API with Generation functionality (Variation and Edit currently unsupported by OpenAI for Dall-E-3).
+<li>Access Dall-E 2 generation using API with Generation, Variation, or Edit endpoints.</li>
 <li>Generate images without corner logo.</li>
+<li>Generate images using API pricing.</li>
 <li>Mask images for Edit endpoints in-browser using canvas editor.</li>
 <li>Save image generations locally, automatically.</li>
-<li>Adjust generation quantity and resolution.</li>
+<li>Adjust generation quantity and resolution (style and quality options available for dall-e-3).</li>
 </ul>
 
 <h3>Starting the server</h3>
@@ -44,7 +45,9 @@ Start your internet browser, and type in the address: http://localhost:3000
 
 To request image generations, visit http://localhost:3000 in your web browser after the server has started. Enter the desired prompt, resolution (default is 1024x1024), and quantity (default is 1), then click 'submit' to send the API request. If 'save locally' is checked (by default it is), the file will save to the /generations folder in the root of your application.
 
-For image variations and edits, the image data is pulled from their respective canvas elements (set at 1024x1024). Make sure there's transparency if you're requesting an edit, you can make transparency using the eraser tool (example in video section).
+If you're requesting generations with Dall-E-3, you can set the quality and style parameters. You cannot request more than 1 image at a time using Dall-E-3.
+
+For image variations and edits, the image data is pulled from their respective canvas elements (set at 1024x1024). Make sure there's transparency if you're requesting an edit, you can make transparency using the eraser tool (example in video section). Keep in mind that this functionality is not supported with Dall-E-3. If you switch over to these features, your options will update to avoid conflicts.
 
 <h3>Built using</h3>
 
@@ -55,9 +58,7 @@ For image variations and edits, the image data is pulled from their respective c
 <li>Fabric.JS (canvas element)</li>
 </ul>
 
-
 <h3>Images / Video</h3>
-
 
 <img src="https://user-images.githubusercontent.com/119073511/219452995-1abde8b6-e21a-4956-b230-00f87b47e7fd.png" width="45%"></img>
 <img src="https://user-images.githubusercontent.com/119073511/219453164-5e1b0449-1298-40a8-b77e-f7cd17860efc.jpg" width="45%"></img>
